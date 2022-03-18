@@ -72,6 +72,7 @@ func main() {
 		for arc != "" {
 			arc = storyArcs[arc].Prompt()
 		}
+		fmt.Println("The End.")
 	} else {
 		tmpl := template.Must(template.ParseFiles("templates/main.tmpl"))
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
