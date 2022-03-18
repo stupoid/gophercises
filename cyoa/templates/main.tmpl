@@ -1,0 +1,9 @@
+<h1>{{.Title}}</h1>
+{{range $line := .Story}}
+    <p>{{$line}}</p>
+{{end}}
+<ul>
+    {{range $option := .Options}}
+        <li><a href="/{{$option.Arc}}">{{$option.Text}}</a></li>
+    {{end}}
+</ul>
