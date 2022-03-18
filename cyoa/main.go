@@ -52,10 +52,12 @@ func (s StoryArc) Prompt() string {
 
 func main() {
 	cliFlag := flag.Bool("cli", false, "cli mode")
+	fileFlag := flag.String("file", "gopher.json", "JSON file to load story-arcs")
+	startFlag := flag.String("start", "intro", "story-arc to start from")
 	portFlag := flag.String("port", "8080", "port for web server")
 	flag.Parse()
 
-	data, err := os.ReadFile("gopher.json")
+	data, err := os.ReadFile(*fileFlag)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,7 +67,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	arc := "intro" // initial arc
+	arc := *startFlag // initial arc
+	_, ok := storyArcs[arc]
+	if !ok {
+		log.Fatalf("'%s' story-arc not found", arc)
+	}
 
 	if *cliFlag {
 		fmt.Println("Starting cli mode")
