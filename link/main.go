@@ -87,3 +87,42 @@ func ParseLinks(r io.Reader) ([]Link, error) {
 
 	return links, nil
 }
+
+// ParseHref parses HTML using x/net/html and
+// uses a DFS to find Anchor elements and returns
+// only the href location.
+func ParseHref(r io.Reader) ([]string, error) {
+	hrefs := []string{}
+	doc, err := html.Parse(r)
+	if err != nil {
+		return nil, err
+	}
+
+	var nodesToVisit deque.Deque
+	nodesToVisit.PushFront(doc)
+	for nodesToVisit.Len() > 0 {
+		i := nodesToVisit.PopFront()
+		c := i.(*html.Node)
+
+		if c.Type == html.ElementNode && c.Data == "a" {
+			for _, a := range c.Attr {
+				if a.Key == "href" {
+					hrefs = append(hrefs, a.Val)
+					break
+				}
+			}
+			if c.NextSibling != nil {
+				nodesToVisit.PushBack(c.NextSibling)
+			}
+		} else {
+			if c.FirstChild != nil {
+				nodesToVisit.PushFront(c.FirstChild)
+			}
+			if c.NextSibling != nil {
+				nodesToVisit.PushBack(c.NextSibling)
+			}
+		}
+	}
+
+	return hrefs, nil
+}
