@@ -88,11 +88,7 @@ func main() {
 		out, _ = xml.MarshalIndent(XMLURLSet, " ", "  ")
 		out = append([]byte(xml.Header), out...)
 	case "txt":
-		var sb strings.Builder
-		for _, url := range urlset {
-			sb.WriteString(url + "\n")
-		}
-		out = []byte(sb.String())
+		out = []byte(strings.Join(urlset, "\n"))
 	}
 	err = os.WriteFile(*fileFlag, out, 0644)
 	if err != nil {
