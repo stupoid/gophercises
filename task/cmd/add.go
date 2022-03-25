@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -12,13 +13,24 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new task to your TODO list",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		text := strings.Join(args, " ")
-		err := AddTask(text)
+		path, err := getDbPath()
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("Added \"%s\" to your task list.\n", text)
+
+		t := Task{
+			Text:      strings.Join(args, " "),
+			CreatedAt: time.Now(),
+		}
+
+		err = putTask(path, BucketName, incompleteTasksKey, t)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Added \"%s\" to your task list.\n", t.Text)
 	},
 }
 

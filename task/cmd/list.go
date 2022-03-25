@@ -11,8 +11,13 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all of your incomplete tasks",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		tasks, err := getTasks(incompleteTasksKey)
+		path, err := getDbPath()
+		if err != nil {
+			log.Fatal(err)
+		}
+		tasks, err := getTasks(path, BucketName, incompleteTasksKey)
 		if err != nil {
 			log.Fatal(err)
 		}

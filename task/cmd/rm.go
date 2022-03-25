@@ -16,16 +16,20 @@ import (
 var rmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove a task on your TODO list",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			log.Fatal("No task id specified")
-		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
 			log.Fatal(err)
 		}
-		// cli displays list starting from 1
-		t, err := PopTask(incompleteTasksKey, id-1)
+		path, err := getDbPath()
+		if err != nil {
+			log.Fatal(err)
+		}
+		t, err := PopTask(path, BucketName, incompleteTasksKey, id-1)
+		if err != nil {
+			log.Fatal(err)
+		}
 		if err != nil {
 			log.Fatal(err)
 		}

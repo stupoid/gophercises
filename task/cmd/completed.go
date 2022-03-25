@@ -12,8 +12,13 @@ import (
 var completedCmd = &cobra.Command{
 	Use:   "completed",
 	Short: "List all of your completed tasks for today",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		tasks, err := getTasks(completedTasksKey)
+		path, err := getDbPath()
+		if err != nil {
+			log.Fatal(err)
+		}
+		tasks, err := getTasks(path, BucketName, completedTasksKey)
 		if err != nil {
 			log.Fatal(err)
 		}

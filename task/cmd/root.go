@@ -7,10 +7,13 @@ import (
 )
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "task",
-	Short: "task is a CLI for managing your TODOs.",
-}
+var (
+	dbFile  string
+	rootCmd = &cobra.Command{
+		Use:   "task",
+		Short: "task is a CLI for managing your TODOs.",
+	}
+)
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -21,4 +24,6 @@ func Execute() {
 	}
 }
 
-func init() {}
+func init() {
+	rootCmd.PersistentFlags().StringVar(&dbFile, "db", "task/task.db", "db file relative to home dir")
+}

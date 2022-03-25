@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -12,15 +13,22 @@ import (
 var doCmd = &cobra.Command{
 	Use:   "do",
 	Short: "Mark a task on your TODO list as complete",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			log.Fatal("No task id specified")
-		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
 			log.Fatal(err)
 		}
-		t, err := DoTask(id - 1)
+		path, err := getDbPath()
+		if err != nil {
+			log.Fatal(err)
+		}
+		t, err := PopTask(path, BucketName, incompleteTasksKey, id-1)
+		if err != nil {
+			log.Fatal(err)
+		}
+		t.UpdatedAt = time.Now()
+		err = putTask(path, BucketName, completedTasksKey, t)
 		if err != nil {
 			log.Fatal(err)
 		}

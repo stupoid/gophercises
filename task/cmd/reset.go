@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -10,9 +12,17 @@ import (
 var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Resets DB by deleting the boltdb file",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		ResetDB("/task/task.db")
-		fmt.Println("DB Reset.")
+		path, err := getDbPath()
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = os.Remove(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Removed DB at \"%s\".\n", path)
 	},
 }
 
